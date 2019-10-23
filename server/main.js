@@ -3,38 +3,47 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-var messages = [{
-  id: 1,
-  text: "Hola soy un mensaje",
-  author: "Server"
-}];
+var readings = [];
 
 app.use(express.static('public'));
 
-app.get('/hello', function(req, res) {
+app.get('/hello', function (req, res) {
   res.status(200).send("Hello World!");
 });
 
-io.on('connection', function(socket) {
+io.on('connection', function (socket) {
   console.log('Alguien se ha conectado con Sockets');
-  socket.emit('messages', messages);
+  socket.emit('messages', readings);
 
-  socket.on('new-message', function(data) {
-    messages.push(data);
+  // socket.on('new-message', function (data) {
+  //   messages.push(data);
 
-    io.sockets.emit('messages', messages);
-  });
+  //   io.sockets.emit('messages', messages);
+  // });
 });
 
-server.listen(8080, function() {
+server.listen(8080, function () {
   console.log("Servidor corriendo en http://localhost:8080");
 });
 
-exports.hi=(text)=>{
-  var mensaje = {
-    author: "mqtt publisher",
-    text: text
-  };
-  messages.push(mensaje);
-  io.sockets.emit('messages', messages);
+exports.sendNotification = (jsonStatus) => {
+  var reading = jsonStatus;
+  io.sockets.emit('message', reading);
+  if (readings.length > 0) {
+    var indexToEdit = -1;
+    readings.forEach((item, index) => {
+      if (item.id === reading.id) {
+        indexToEdit = index;
+        return;
+      }
+    });
+    if (indexToEdit >= 0) {
+      readings[indexToEdit] = reading;
+    }
+    else
+      readings.push(reading);
+  }
+  else
+    readings.push(reading);
+
 }
