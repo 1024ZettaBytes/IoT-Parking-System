@@ -11,5 +11,5 @@ client.on('connect', function () {
         console.log('Enviado: '+status);
         console.log(JSON.stringify(reading));
         status = !status;
-    }, 3000);
+    }, 10000);
 });
