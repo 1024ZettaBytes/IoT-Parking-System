@@ -1,9 +1,10 @@
 console.log("[*] Quality running.");
 var server = require("../server/main");
+var db = require("../db/dbManager");
 var history = {
 };
 exports.checkQuality = (readigJSON) => {
-    const historyId = readigJSON.id + "";
+    const historyId = readigJSON.idSensor + "";
     var myLastReading = 0;
     if (!history[historyId]) {
 
@@ -19,7 +20,7 @@ exports.checkQuality = (readigJSON) => {
         if(history[historyId].lastReading===myLastReading){
             setTimeout(() => {
                 server.sendNotification(readigJSON);
-                // Se guarda en la bd
+                db.saveReading(readigJSON);
             }, 10);
         }
         else{
