@@ -4,7 +4,7 @@ var db = require("../db/dbManager");
 var history = {
 };
 exports.checkQuality = (readigJSON) => {
-    const historyId = readigJSON.idSensor + "";
+    const historyId = readigJSON.sensorId + "";
     var myLastReading = 0;
     if (!history[historyId]) {
 
