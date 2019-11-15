@@ -2,13 +2,21 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+const path = require('path');
 
 var readings = [];
 
-app.use(express.static('public'));
+// importing routes
+const indexRoutes = require('./routes/index')
+// routes
+app.use('/', indexRoutes);
+app.use(express.static(path.join(__dirname, '/views')));
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 app.get('/hello', function (req, res) {
-  res.status(200).send("Hello World!");
+  res.status(200).send("Hello rld!");
 });
 
 io.on('connection', function (socket) {
