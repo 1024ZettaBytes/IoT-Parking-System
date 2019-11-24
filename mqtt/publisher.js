@@ -1,6 +1,6 @@
 var mqtt = require('mqtt');
 var client = mqtt.connect('mqtt://localhost:1883');
-var status = true;
+var status = false;
 client.on('connect', function () {
     setInterval(function () {
         var reading = {
@@ -11,5 +11,5 @@ client.on('connect', function () {
         console.log('Enviado: '+status);
         console.log(JSON.stringify(reading));
         status = !status;
-    }, 12000);
+    }, 11000);
 });
