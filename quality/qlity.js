@@ -7,11 +7,13 @@ exports.checkQuality = (readigJSON) => {
     const historyId = readigJSON.sensorId + "";
     var myLastReading = 0;
     if (!history[historyId]) {
-
-        history[historyId] = {
-            "lastReading": 0,
-            "originalStatus": false
-        };
+        db.getSensorLastStatus(readigJSON.sensorId).then((readignFromDB)=>{
+            history[historyId] = {
+                "lastReading": 0,
+                "originalStatus": readignFromDB.status
+            };
+        });
+        
 
     }
     else {

@@ -29,6 +29,10 @@ class DatabaseManager {
                 console.error(err);
             });
     }
+    getSensorLastStatus(sensorId){
+        return Readingmodel.findOne({sensorId}, {}, { sort: { 'dateTime' : -1 } }).exec();
+       
+    }
     saveReading(readingObject) {
 
         var date = new Date();
