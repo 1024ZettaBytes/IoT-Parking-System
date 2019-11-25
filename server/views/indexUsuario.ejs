@@ -1,14 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>My Aplicación con Sockets</title>
   <script src="js/socket.io.js"></script>
-  <script src="js/myScript.js"></script>
+  <script>
+    var socket = io.connect('http://'+'<%=ip%>'+':8080', { 'forceNew': true });
+
+    socket.on('messages', (data) => {
+      console.log(data);
+      data.forEach((item, index) => {
+        updatePlace(item);
+      });
+    });
+    socket.on('message', (data) => {
+      console.log(data);
+      updatePlace(data);
+    });
+    function updatePlace(jsonObject) {
+      var color = "red";
+      var text = "OCUPADO";
+      if (!jsonObject.status) {
+        color = "green";
+        text = "LIBRE";
+      }
+      document.getElementById('Place' + jsonObject.sensorId).innerHTML = text;
+      document.getElementById('Place' + jsonObject.sensorId).style.color = color;
+    }
+  </script>
 </head>
+
 <body>
   <h1>My App</h1>
   <div id="Place1" style="color:gray">Desconocido</div>
+  <div id="Place2" style="color:gray">Desconocido</div>
 
 </body>
+
 </html>

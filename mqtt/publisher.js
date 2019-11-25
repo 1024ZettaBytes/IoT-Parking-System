@@ -4,12 +4,12 @@ var status = false;
 client.on('connect', function () {
     setInterval(function () {
         var reading = {
-            sensorId:1,
+            sensorId:2,
             status: status
         };
         client.publish('readings', JSON.stringify(reading));
         console.log('Enviado: '+status);
         console.log(JSON.stringify(reading));
         status = !status;
-    }, 11000);
+    }, 3200);
 });

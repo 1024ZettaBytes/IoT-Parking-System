@@ -1,19 +1,25 @@
 console.log("[*] Quality running.");
-var server = require("../server/main");
+var server = null;
 var db = require("../db/dbManager");
 var history = {
 };
+db.connect().then(() => {
+    console.log("[*] Connected to the DB.");
+    server = require("../server/main");
+}).catch(err => {
+    console.log("[ERROR] DB connection failed.");
+});
 exports.checkQuality = (readigJSON) => {
     const historyId = readigJSON.sensorId + "";
     var myLastReading = 0;
     if (!history[historyId]) {
-        db.getSensorLastStatus(readigJSON.sensorId).then((readignFromDB)=>{
+        db.getSensorLastStatus(readigJSON.sensorId).then((readignFromDB) => {
             history[historyId] = {
                 "lastReading": 0,
-                "originalStatus": readignFromDB.status
+                "originalStatus": readignFromDB!=null ? readignFromDB.status:false
             };
         });
-        
+
 
     }
     else {
@@ -33,11 +39,11 @@ exports.checkQuality = (readigJSON) => {
                 }, 10);
             }
             else
-            console.log("No se guardó porque es igual al original");
+                console.log("No se guardó porque es igual al original");
         }
         else {
             console.log("NO se hace nada pues fui interrumpido.")
         }
 
-    }, 10000);
+    }, 3000);
 }

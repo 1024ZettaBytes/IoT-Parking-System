@@ -17,6 +17,6 @@ function updatePlace(jsonObject){
     color = "green";
     text = "LIBRE";
   }
-  document.getElementById('Place'+jsonObject.idSensor).innerHTML = text;
-  document.getElementById('Place'+jsonObject.idSensor).style.color = color;
+  document.getElementById('Place'+jsonObject.sensorId).innerHTML = text;
+  document.getElementById('Place'+jsonObject.sensorId).style.color = color;
 }
