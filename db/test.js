@@ -9,5 +9,5 @@ console.log(valor);
  */
 db.connect().then(()=>{
     console.log("Conectado");
-    db.saveSensor({id:2});
+    db.saveSensor({id:4});
 });

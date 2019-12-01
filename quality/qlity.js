@@ -8,6 +8,7 @@ db.connect().then(() => {
     server = require("../server/main");
 }).catch(err => {
     console.log("[ERROR] DB connection failed.");
+    console.log(err);
 });
 exports.checkQuality = (readigJSON) => {
     const historyId = readigJSON.sensorId + "";

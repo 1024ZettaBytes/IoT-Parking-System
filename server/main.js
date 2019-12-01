@@ -1,43 +1,81 @@
-var express = require('express');
+var express = require("express");
 var app = express();
 var db = require("../db/dbManager");
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
-const path = require('path');
-var ip = require('ip');
+var server = require("http").Server(app);
+var io = require("socket.io")(server);
+const path = require("path");
+var ip = require("ip");
+var moment = require("moment");
+
+let SensorModel = require("../db/models/sensor");
+let Readingmodel = require("../db/models/readings");
 
 var readings = [];
 // Initializing readings
-db.getSensors().then((sensors)=>{
-  sensors.forEach(sensor=>{
-    db.getSensorLastStatus(sensor.id).then((reading)=>{
-      const rtemp ={
+db.getSensors().then(sensors => {
+  sensors.forEach(sensor => {
+    db.getSensorLastStatus(sensor.id).then(reading => {
+      const rtemp = {
         sensorId: sensor.id,
-        status: reading!=null ? reading.status : false
-      }
-        readings.push(rtemp);  
+        status: reading != null ? reading.status : false
+      };
+      readings.push(rtemp);
     });
   });
 });
 
-app.use(express.static(path.join(__dirname, '/views')));
+app.use(express.static(path.join(__dirname, "/views")));
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
-app.get('/', function (req, res) {
-  res.render('indexUsuario',{ip: ip.address()});
+app.get("/", function(req, res) {
+  res.render("indexUsuario", { ip: ip.address() });
 });
-app.get('/admin', (req, res) => {
-  res.render('indexAdmin', {ip: ip.address()});
-})
-app.get('/admin/api/porcentajeOcupacion', (req, res) => {
-  res.render('indexUsuario');
-})
-io.on('connection', function (socket) {
-  console.log('Alguien se ha conectado con Sockets');
-  socket.emit('messages', readings);
-  socket.emit('currentPercentage', calculatePercentage());
+app.get("/admin", (req, res) => {
+  res.render("indexAdmin", { ip: ip.address() });
+});
+
+// Route for KPI 2: get use percentage by date
+app.get("/api/calculations/percentage/:msg", async (req, res) => {
+  const msg = req.params.msg;
+  let fromDate = moment(msg).startOf("day");
+  let toDate = moment(msg).endOf("day");
+  console.log(fromDate);
+  console.log(toDate);
+  let readingsbyDate = await Readingmodel.find({
+    dateTime: { $gte: fromDate.toDate(), $lte: toDate.toDate() }
+  });
+  let s = await SensorModel.find();
+
+  // Search for readings with hour at i position
+  let HourxSensor = [];
+  HourxSensor.push([]);
+  
+  // Initialize array elements to false
+  for (let i = 1; i < 25; i++) {
+    let sensorArray = Array(s.length + 1);
+    sensorArray[0]=i;
+    
+    for (let x = 1; x < sensorArray.length; x++) {
+      sensorArray[x] = false;
+    }
+    HourxSensor.push(sensorArray);
+  }
+    for (let n = 0; n < readingsbyDate.length; n++) {
+    const hour = moment(readingsbyDate[n].dateTime).hours();
+    const sensorId = readingsbyDate[n].sensorId;
+    HourxSensor[hour][sensorId] = readingsbyDate[n].status ? true: HourxSensor[hour][sensorId];
+  }
+  console.log(HourxSensor);
+  console.log(readingsbyDate.length);
+  res.status(200).send("Hola desde el server");
+});
+
+io.on("connection", function(socket) {
+  console.log("Alguien se ha conectado con Sockets");
+  socket.emit("messages", readings);
+  socket.emit("currentPercentage", calculatePercentage());
   // socket.on('new-message', function (data) {
   //   messages.push(data);
 
@@ -45,7 +83,7 @@ io.on('connection', function (socket) {
   // });
 });
 
-server.listen(8080, function () {
+server.listen(8080, function() {
   console.log("Servidor corriendo en http://localhost:8080");
 });
 
@@ -58,17 +96,16 @@ calculatePercentage = () => {
     element.status ? ocuppied++ : free++;
   });
   const percentage = {
-    occupied: ocuppied * 100 / length,
-    free: free * 100 / length
-  }
+    occupied: (ocuppied * 100) / length,
+    free: (free * 100) / length
+  };
   return percentage;
-}
-
+};
 
 // Public methods
-exports.sendNotification = (jsonStatus) => {
+exports.sendNotification = jsonStatus => {
   var reading = jsonStatus;
-  io.sockets.emit('message', reading);
+  io.sockets.emit("message", reading);
   if (readings.length > 0) {
     var indexToEdit = -1;
     readings.forEach((item, index) => {
@@ -79,17 +116,8 @@ exports.sendNotification = (jsonStatus) => {
     });
     if (indexToEdit >= 0) {
       readings[indexToEdit] = reading;
-    }
-    else
-      readings.push(reading);
-  }
-  else
-    readings.push(reading);
-
-    console.log(readings);
+    } else readings.push(reading);
+  } else readings.push(reading);
   // Always  calculates current percentage of ocuppied places and emits it.
-  io.sockets.emit('currentPercentage', calculatePercentage());
-  
-
-}
-
+  io.sockets.emit("currentPercentage", calculatePercentage());
+};
