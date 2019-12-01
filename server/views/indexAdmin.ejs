@@ -55,7 +55,10 @@
 
   <body>
     <input type="date" name="" id="inputFecha" />
+    <input type="date" name="" id="inputFecha2" />
+    <button onclick="getMeansByPeriod()">Promedios</button>
     <button onclick="getPercentageByDate()">aberr</button>
+    <button onclick="getPrediction()">PREDICE</button>
     <div class="wrapper">
       <div class="sidebar" data-image="../assets/img/sidebar-5.jpg">
         <!--
@@ -694,7 +697,7 @@
       if (this.readyState === 4 && this.status === 200) {
         if ("ERROR_BD" !== this.responseText) {
           if ("ERROR_FORMATO_CORREO" !== this.responseText) {
-            alert(this.responseText);
+            console.log(this.responseText);
           } else {
             // Abrir modal informando de error en el formato de correo
             document.getElementById("exampleModalLabel").innerHTML = "ERROR!";
@@ -720,6 +723,76 @@
         true
       );
       apiPercentageByDate.send();
+    }
+    ////////////////////////////////////////////////////////////////////////////
+
+    /////// KPI3 ////////
+    let apiMeansByPeriod = new XMLHttpRequest();
+    apiMeansByPeriod.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        if ("ERROR_BD" !== this.responseText) {
+          if ("ERROR_FORMATO_CORREO" !== this.responseText) {
+            console.log(this.responseText);
+          } else {
+            // Abrir modal informando de error en el formato de correo
+            document.getElementById("exampleModalLabel").innerHTML = "ERROR!";
+            document.getElementById("mensaje").innerHTML =
+              "Ingrese un correo válido.";
+            $("#myModal").modal("show");
+          }
+        } else {
+          // Abrir modal informando de error en la bd
+          document.getElementById("exampleModalLabel").innerHTML = "ERROR!";
+          document.getElementById("mensaje").innerHTML =
+            "Ocurrió un error al acceder a la base de datos. Intente nuevamente.";
+          $("#myModal").modal("show");
+        }
+      }
+    };
+
+    function getMeansByPeriod(){
+        let dateFrom = document.getElementById("inputFecha");
+        let dateTo = document.getElementById("inputFecha2");
+      apiPercentageByDate.open(
+        "GET",
+        "../api/calculations/mean/" + dateFrom.value+"/"+dateTo.value,
+        true
+      );
+      apiPercentageByDate.send();
+    }
+    ////////////////////////////////////////////////////////////////////////////
+
+    ///// Linear Regression ///
+    let apiPrediction = new XMLHttpRequest();
+    apiPrediction.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        if ("ERROR_BD" !== this.responseText) {
+          if ("ERROR_FORMATO_CORREO" !== this.responseText) {
+            console.log(this.responseText);
+          } else {
+            // Abrir modal informando de error en el formato de correo
+            document.getElementById("exampleModalLabel").innerHTML = "ERROR!";
+            document.getElementById("mensaje").innerHTML =
+              "Ingrese un correo válido.";
+            $("#myModal").modal("show");
+          }
+        } else {
+          // Abrir modal informando de error en la bd
+          document.getElementById("exampleModalLabel").innerHTML = "ERROR!";
+          document.getElementById("mensaje").innerHTML =
+            "Ocurrió un error al acceder a la base de datos. Intente nuevamente.";
+          $("#myModal").modal("show");
+        }
+      }
+    };
+
+    function getPrediction(){
+      apiPrediction.open(
+        "GET",
+        "../api/analytics/prediction/6",
+        true
+      );
+      apiPrediction.send();
     }
   </script>
 </html>

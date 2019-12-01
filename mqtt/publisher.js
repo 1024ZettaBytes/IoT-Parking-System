@@ -1,10 +1,10 @@
 var mqtt = require("mqtt");
 var client = mqtt.connect("mqtt://localhost:1883");
-var status = true;
+var status = false;
 client.on("connect", function() {
   setInterval(function() {
     var reading = {
-      sensorId: 2,
+      sensorId: 1,
       status: status
     };
     client.publish("readings", JSON.stringify(reading));
