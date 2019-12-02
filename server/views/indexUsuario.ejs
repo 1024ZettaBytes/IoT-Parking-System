@@ -1,14 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Estacionamiento</title>
-  <script src="js/socket.io.js"></script>
-  <script src="js/myScript.js"></script>
-</head>
-<body>
-  <h1>My App</h1>
-  <div id="Place1" style="color:gray">Desconocido</div>
+<html lang="es">
 
+<head>
+    <meta charset="UTF-8">
+    <title>Estacionamiento</title>
+    <script src="js/socket.io.js"></script>
+    <script src="js/myScript.js"></script>
+
+    <link rel="stylesheet" href="CSS/style.css" />
+</head>
+
+<body>
+    <header id="main-header">
+        <a id="logo-header" href="#">
+            <span class="site-name">SmartParking</span>
+            <span class="site-desc">Consulta de lugares libres</span>
+        </a>
+        <!-- / #logo-header -->
+
+        <nav>
+            <ul>
+                <li><a href="/admin">Administración</a></li>
+            </ul>
+        </nav>
+        <!-- / nav -->
+    </header>
+    <!-- / #main-header -->
+
+    <section id="main-content">
+        <article>
+            <div class="content">
+
+                <table class="GeneratedTable">
+                    <tbody>
+                        <tr>
+                            <td id="Place1">Desconocido</td>
+                            <td bgcolor="gray" width="100"></td>
+                            <td>Desconocido</td>
+                            <td>Desconocido</td>
+                            <td bgcolor="gray" width="100"></td>
+                            <td>Desconocido</td>
+                        </tr>
+                        <tr>
+                            <td>Desconocido</td>
+                            <td id="ground" bgcolor="gray"></td>
+                            <td>Desconocido</td>
+                            <td>Desconocido</td>
+                            <td id="ground" bgcolor="gray"></td>
+                            <td>Desconocido</td>
+                        </tr>
+                        <tr>
+                            <td>Desconocido</td>
+                            <td id="ground" bgcolor="gray"></td>
+                            <td>Desconocido</td>
+                            <td>Desconocido</td>
+                            <td id="ground" bgcolor="gray"></td>
+                            <td>Desconocido</td>
+                        </tr>
+                        <tr>
+                            <td>Desconocido</td>
+                            <td id="ground" bgcolor="gray"></td>
+                            <td>Desconocido</td>
+                            <td>Desconocido</td>
+                            <td id="ground" bgcolor="gray"></td>
+                            <td>Desconocido</td>
+                        </tr>
+                        <tr>
+                            <td>Desconocido</td>
+                            <td id="ground" bgcolor="gray"></td>
+                            <td>Desconocido</td>
+                            <td>Desconocido</td>
+                            <td id="ground" bgcolor="gray"></td>
+                            <td>Desconocido</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+
+            </div>
+        </article>
+        <!-- /article -->
+    </section>
+    <!-- / #main-content -->
+
+    <footer id="main-footer">
+        <p>
+            </a>SmartParking</a>
+        </p>
+    </footer>
+    <!-- / #main-footer -->
 </body>
+
 </html>
