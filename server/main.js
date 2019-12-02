@@ -45,7 +45,6 @@ app.get("/api/calculations/percentage/:date", async (req, res) => {
 });
 // Route for KPI 3: get mean of use (minutes) by period
 app.get("/api/calculations/mean/:from/:to", async (req, res) => {
-  const sensor = req.params.sensor;
   const from = req.params.from;
   const to = req.params.to;
   let means = [];
@@ -197,9 +196,10 @@ calculateDayUsePercentege = async date => {
       ? true
       : HourxSensor[hour][sensorId];
   }
-  let percentages = new Int16Array(24);
+  let percentages = [];
   const totalSensors = s.length;
   for (let i = 0; i < 24; i++) {
+    percentages.push(0);
     let activeSensors = 0;
     // Calculate percentaje of every hour
     for (let n = 1; n < s.length; n++) {
