@@ -6,6 +6,7 @@ var io = require("socket.io")(server);
 const path = require("path");
 var ip = require("ip");
 var moment = require("moment");
+let regression = require("regression");
 
 let SensorModel = require("../db/models/sensor");
 let Readingmodel = require("../db/models/readings");
@@ -37,50 +38,12 @@ app.get("/admin", (req, res) => {
 });
 
 // Route for KPI 2: get use percentage by date
-app.get("/api/calculations/percentage/:msg", async (req, res) => {
-  const msg = req.params.msg;
-  let fromDate = moment(msg).startOf("day");
-  let toDate = moment(msg).endOf("day");
-  console.log(fromDate);
-  console.log(toDate);
-  let readingsbyDate = await Readingmodel.find({
-    dateTime: { $gte: fromDate.toDate(), $lte: toDate.toDate() }
-  });
-  let s = await SensorModel.find();
-  // Search for readings with hour at i position
-  let HourxSensor = [];
-  HourxSensor.push([]);
-  // Initialize array elements to false
-  for (let i = 1; i < 25; i++) {
-    let sensorArray = Array(s.length + 1);
-    sensorArray[0] = i;
-    for (let x = 1; x < sensorArray.length; x++) {
-      sensorArray[x] = false;
-    }
-    HourxSensor.push(sensorArray);
-  }
-  for (let n = 0; n < readingsbyDate.length; n++) {
-    const hour = moment(readingsbyDate[n].dateTime).hours();
-    const sensorId = readingsbyDate[n].sensorId;
-    HourxSensor[hour][sensorId] = readingsbyDate[n].status
-      ? true
-      : HourxSensor[hour][sensorId];
-  }
-  let percentages = new Int16Array(25);
-  const totalSensors = s.length;
-  for (let i = 1; i < 25; i++) {
-    let activeSensors = 0;
-    // Calculate percentaje of every hour
-    for (let n = 1; n < s.length; n++) {
-      if (HourxSensor[i][n]) {
-        activeSensors++;
-      }
-    }
-    percentages[i] = (activeSensors * 100) / totalSensors;
-  }
+app.get("/api/calculations/percentage/:date", async (req, res) => {
+  const date = req.params.date;
+  const percentages = await calculateDayUsePercentege(date);
   res.status(200).send(percentages);
 });
-// Route for KPI 3: get use percentage by date
+// Route for KPI 3: get mean of use (minutes) by period
 app.get("/api/calculations/mean/:from/:to", async (req, res) => {
   const sensor = req.params.sensor;
   const from = req.params.from;
@@ -131,22 +94,51 @@ app.get("/api/calculations/mean/:from/:to", async (req, res) => {
 });
 
 // Route for analytic (linear regression) for prediction
-app.get("/api/analytics/prediction/:dayOfWeek", async (req, res) => {
-  let dates=[];
-  const dayOfWeek = req.params.dayOfWeek;
+app.get("/api/analytics/prediction/:dateToPredict", async (req, res) => {
+  let percentages = [];
+  let dates = [];
+  let dayOfWeek = moment(req.params.dateToPredict).day(); // 0
+
+  // Find the first reading int DB
   let rd = await Readingmodel.findOne();
+  // Find the first coincidence of the recived day of week
   let firstDate = moment(rd.dateTime).startOf("day");
-  let firstDay = firstDate.day();
-  firstDay = firstDay==0 ? 7 : firstDay;
+  let firstDay = firstDate.day(); // 5
+  dayOfWeek = dayOfWeek == 0 ? 7 : dayOfWeek;
+  firstDay = firstDay == 0 ? 7 : firstDay;
   if (dayOfWeek >= firstDay)
     firstDate = firstDate.add(dayOfWeek - firstDay, "d");
   else firstDate = firstDate.add(7 - firstDay + dayOfWeek, "d");
   const currentDate = moment(Date.now()).startOf("day");
-  while(firstDate.isSameOrBefore(currentDate)){
+  // Start iterating for searching all the "day of week" before current date
+  while (firstDate.isBefore(currentDate)) {
+    // Save date into array for analization and go to the next week
     dates.push(firstDate.clone());
-    firstDate = firstDate.add(7,"d");
+    firstDate = firstDate.add(7, "d");
   }
-
+  // For every date on array: calculate use percentage for every hour
+  for (let i = 0; i < dates.length; i++) {
+    const dayPercentage = await calculateDayUsePercentege(dates[i]);
+    percentages.push(dayPercentage);
+  }
+  // If the number of arrays is more than 1
+  if (percentages.length > 0) {
+    let finalPredictions = new Int32Array(24);
+    // Calculates linnear regression for every hour
+    for (let hour = 0; hour < 24; hour++) {
+      let bigArray = [];
+      let miniArray = Array(2);
+      for (let i = 0; i < percentages.length; i++) {
+        miniArray[0] = i + 1;
+        miniArray[1] = percentages[i][hour];
+      }
+      bigArray.push(miniArray);
+      let lineal = regression.linear(bigArray);
+      let prediction = lineal.predict(percentages.length + 1);
+      finalPredictions[hour] = Math.round(prediction[1]);
+    }
+    res.status(200).send(finalPredictions)
+  } else res.status(200).send("NOT_ENOUGH_DATA");
 });
 io.on("connection", function(socket) {
   console.log("Alguien se ha conectado con Sockets");
@@ -162,7 +154,8 @@ server.listen(8080, function() {
   console.log("Servidor corriendo en http://localhost:8080");
 });
 
-// Calculations methods
+//// Private methods
+// Calculate current use percentage
 calculatePercentage = () => {
   const length = readings.length;
   let ocuppied = 0;
@@ -175,6 +168,48 @@ calculatePercentage = () => {
     free: (free * 100) / length
   };
   return percentage;
+};
+// Calculates use percentage by hours on especific date
+calculateDayUsePercentege = async date => {
+  let fromDate = moment(date).startOf("day");
+  let toDate = moment(date).endOf("day");
+  let readingsbyDate = await Readingmodel.find({
+    dateTime: { $gte: fromDate.toDate(), $lte: toDate.toDate() }
+  });
+  let s = await SensorModel.find();
+  // Search for readings with hour at i position
+  let HourxSensor = [];
+  HourxSensor.push([]);
+  // Initialize array elements to false
+  for (let i = 1; i < 24; i++) {
+    let sensorArray = Array(s.length + 1);
+    sensorArray[0] = i;
+    for (let x = 1; x < sensorArray.length; x++) {
+      sensorArray[x] = false;
+    }
+    HourxSensor.push(sensorArray);
+  }
+
+  for (let n = 0; n < readingsbyDate.length; n++) {
+    const hour = moment(readingsbyDate[n].dateTime).hours();
+    const sensorId = readingsbyDate[n].sensorId;
+    HourxSensor[hour][sensorId] = readingsbyDate[n].status
+      ? true
+      : HourxSensor[hour][sensorId];
+  }
+  let percentages = new Int16Array(24);
+  const totalSensors = s.length;
+  for (let i = 0; i < 24; i++) {
+    let activeSensors = 0;
+    // Calculate percentaje of every hour
+    for (let n = 1; n < s.length; n++) {
+      if (HourxSensor[i][n]) {
+        activeSensors++;
+      }
+    }
+    percentages[i] = (activeSensors * 100) / totalSensors;
+  }
+  return percentages;
 };
 // Public methods
 exports.sendNotification = jsonStatus => {

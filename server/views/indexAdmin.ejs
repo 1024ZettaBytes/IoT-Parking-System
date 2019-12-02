@@ -56,6 +56,7 @@
   <body>
     <input type="date" name="" id="inputFecha" />
     <input type="date" name="" id="inputFecha2" />
+    <input type="day">
     <button onclick="getMeansByPeriod()">Promedios</button>
     <button onclick="getPercentageByDate()">aberr</button>
     <button onclick="getPrediction()">PREDICE</button>
@@ -787,9 +788,10 @@
     };
 
     function getPrediction(){
+      let dateFrom = document.getElementById("inputFecha");
       apiPrediction.open(
         "GET",
-        "../api/analytics/prediction/6",
+        "../api/analytics/prediction/"+dateFrom.value,
         true
       );
       apiPrediction.send();
