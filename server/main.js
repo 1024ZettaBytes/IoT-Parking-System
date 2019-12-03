@@ -7,10 +7,19 @@ const path = require("path");
 var ip = require("ip");
 var moment = require("moment");
 let regression = require("regression");
+let nodemailer = require('nodemailer');
+let transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth:{
+    user:'parkingsystem.iot@gmail.com',
+    pass:'parkingsystem2019'
+  }
+});
 
 let SensorModel = require("../db/models/sensor");
 let Readingmodel = require("../db/models/readings");
-
+let UserModel = require('../db/models/user');
+let AlertModel = require('../db/models/alert');
 var readings = [];
 // Initializing readings
 db.getSensors().then(sensors => {
@@ -26,17 +35,29 @@ db.getSensors().then(sensors => {
 });
 
 app.use(express.static(path.join(__dirname, "/views")));
-
+app.use(express.json());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.get("/", function(req, res) {
   res.render("indexUsuario", { ip: ip.address() });
 });
-app.get("/admin", (req, res) => {
+app.get("/admin", async (req, res) => {
+  let alerts = await AlertModel.find();
+  
   res.render("indexAdmin", { ip: ip.address() });
 });
-
+app.get("/admin/analytics", (req, res)=>{
+  res.render("indexAdmin-analytics", { ip: ip.address() });
+});
+app.get("/admin/settings", async (req, res)=>{
+  let adminConfig =  await UserModel.findOne({admin:true});
+  res.render("indexAdmin-settings", { ip: ip.address(), adminConfig:adminConfig });
+});
+app.post("/api/admin/setAlert", async (req,res)=>{
+  let updated = await UserModel.updateOne({admin:true}, req.body);
+  res.send("Recibido en el server");
+});
 // Route for KPI 2: get use percentage by date
 app.get("/api/calculations/percentage/:date", async (req, res) => {
   const date = req.params.date;
@@ -122,7 +143,7 @@ app.get("/api/analytics/prediction/:dateToPredict", async (req, res) => {
   }
   // If the number of arrays is more than 1
   if (percentages.length > 0) {
-    let finalPredictions = new Int32Array(24);
+    let finalPredictions = [];
     // Calculates linnear regression for every hour
     for (let hour = 0; hour < 24; hour++) {
       let bigArray = [];
@@ -134,9 +155,9 @@ app.get("/api/analytics/prediction/:dateToPredict", async (req, res) => {
       bigArray.push(miniArray);
       let lineal = regression.linear(bigArray);
       let prediction = lineal.predict(percentages.length + 1);
-      finalPredictions[hour] = Math.round(prediction[1]);
+      finalPredictions.push(Math.round(prediction[1]));
     }
-    res.status(200).send(finalPredictions)
+    res.status(200).send(finalPredictions);
   } else res.status(200).send("NOT_ENOUGH_DATA");
 });
 io.on("connection", function(socket) {
@@ -228,5 +249,37 @@ exports.sendNotification = jsonStatus => {
     } else readings.push(reading);
   } else readings.push(reading);
   // Always  calculates current percentage of ocuppied places and emits it.
-  io.sockets.emit("currentPercentage", calculatePercentage());
+  let percentage = calculatePercentage();
+  io.sockets.emit("currentPercentage", percentage);
+  shouldSentEmail(percentage.occupied);
+  
 };
+async function shouldSentEmail(percentage){
+  let adminConfig = await UserModel.findOne({admin:true});
+  console.log("Voy a comprobar");
+  console.log("Porcentaje: "+percentage);
+  console.log("Notificar: "+adminConfig.notify);
+  console.log("MAX: "+adminConfig.maxLimit);
+
+    // if needs to send email and web notifications
+    
+    if(adminConfig.notify && percentage>adminConfig.maxLimit){
+      io.sockets.emit("overLimit", adminConfig.maxLimit);
+      // Sends email if exists
+      if(adminConfig.email!==''){
+        const mailOptions = {
+          from: 'parkingsystem.iot@gmail.com', // sender address
+          to: adminConfig.email, // list of receivers
+          subject: '¡Atención!', // Subject line
+          html: '<h4>Se ha sobrepasado el límite de '+adminConfig.maxLimit+'% de ocupación.</h4><br>'+
+          '<h5>Fecha y hora: '+moment(Date.now()).format("DD-MM-YY HH:mm")+'</h5>'// plain text body
+        };
+        transporter.sendMail(mailOptions, function (err, info) {
+          if(err)
+            console.log(err)
+          else
+            console.log("Email enviado.");
+       });
+      }
+    }
+}

@@ -1,3 +1,5 @@
+
+
 $().ready(function () {
     $sidebar = $('.sidebar');
     $sidebar_img_container = $sidebar.find('.sidebar-background');
@@ -366,22 +368,25 @@ demo = {
         // lbd.startAnimationForBarChart(emailsSubscriptionChart);
 
     },
-
+message:"Original",
     showNotification: function (from, align) {
         color = Math.floor((Math.random() * 4) + 1);
 
         $.notify({
-            icon: "nc-icon nc-app",
-            message: "Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for every web developer."
+            icon: "nc-icon nc-bell-55",
+            message: this.message
 
         }, {
             type: type[color],
-            timer: 8000,
+            timer: 10000,
             placement: {
                 from: from,
                 align: align
             }
         });
+    },
+    notify:function (message){
+       this.message = message;
     }
 
 

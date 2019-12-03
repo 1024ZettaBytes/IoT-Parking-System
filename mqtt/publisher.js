@@ -4,7 +4,7 @@ var status = false;
 client.on("connect", function() {
   setInterval(function() {
     var reading = {
-      sensorId: 1,
+      sensorId: 4,
       status: status
     };
     client.publish("readings", JSON.stringify(reading));

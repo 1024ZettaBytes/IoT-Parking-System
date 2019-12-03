@@ -5,6 +5,7 @@ const database = "parking";
 
 let SensorModel = require("./models/sensor");
 let Readingmodel = require("./models/readings");
+let UserModel = require('./models/user');
 class DatabaseManager {
 
 
@@ -41,6 +42,13 @@ class DatabaseManager {
             .catch(err => {
                 console.error(err);
             });
+    }
+   async getAdminOptions(){
+
+      let configs = await UserModel.findOne({admin:true});
+      console.log(configs);
+      return "YA";
+       
     }
 }
 module.exports = new DatabaseManager();
