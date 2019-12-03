@@ -7,19 +7,19 @@ const path = require("path");
 var ip = require("ip");
 var moment = require("moment");
 let regression = require("regression");
-let nodemailer = require('nodemailer');
+let nodemailer = require("nodemailer");
 let transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth:{
-    user:'parkingsystem.iot@gmail.com',
-    pass:'parkingsystem2019'
+  service: "gmail",
+  auth: {
+    user: "parkingsystem.iot@gmail.com",
+    pass: "parkingsystem2019"
   }
 });
 
 let SensorModel = require("../db/models/sensor");
 let Readingmodel = require("../db/models/readings");
-let UserModel = require('../db/models/user');
-let AlertModel = require('../db/models/alert');
+let UserModel = require("../db/models/user");
+let AlertModel = require("../db/models/alert");
 var readings = [];
 // Initializing readings
 db.getSensors().then(sensors => {
@@ -44,18 +44,21 @@ app.get("/", function(req, res) {
 });
 app.get("/admin", async (req, res) => {
   let alerts = await AlertModel.find();
-  
-  res.render("indexAdmin", { ip: ip.address() });
+  console.log(alerts);
+  res.render("indexAdmin", { ip: ip.address(), alerts: alerts });
 });
-app.get("/admin/analytics", (req, res)=>{
+app.get("/admin/analytics", (req, res) => {
   res.render("indexAdmin-analytics", { ip: ip.address() });
 });
-app.get("/admin/settings", async (req, res)=>{
-  let adminConfig =  await UserModel.findOne({admin:true});
-  res.render("indexAdmin-settings", { ip: ip.address(), adminConfig:adminConfig });
+app.get("/admin/settings", async (req, res) => {
+  let adminConfig = await UserModel.findOne({ admin: true });
+  res.render("indexAdmin-settings", {
+    ip: ip.address(),
+    adminConfig: adminConfig
+  });
 });
-app.post("/api/admin/setAlert", async (req,res)=>{
-  let updated = await UserModel.updateOne({admin:true}, req.body);
+app.post("/api/admin/setAlert", async (req, res) => {
+  let updated = await UserModel.updateOne({ admin: true }, req.body);
   res.send("Recibido en el server");
 });
 // Route for KPI 2: get use percentage by date
@@ -252,34 +255,47 @@ exports.sendNotification = jsonStatus => {
   let percentage = calculatePercentage();
   io.sockets.emit("currentPercentage", percentage);
   shouldSentEmail(percentage.occupied);
-  
 };
-async function shouldSentEmail(percentage){
-  let adminConfig = await UserModel.findOne({admin:true});
+async function shouldSentEmail(percentage) {
+  let adminConfig = await UserModel.findOne({ admin: true });
   console.log("Voy a comprobar");
-  console.log("Porcentaje: "+percentage);
-  console.log("Notificar: "+adminConfig.notify);
-  console.log("MAX: "+adminConfig.maxLimit);
+  console.log("Porcentaje: " + percentage);
+  console.log("Notificar: " + adminConfig.notify);
+  console.log("MAX: " + adminConfig.maxLimit);
 
-    // if needs to send email and web notifications
-    
-    if(adminConfig.notify && percentage>adminConfig.maxLimit){
-      io.sockets.emit("overLimit", adminConfig.maxLimit);
-      // Sends email if exists
-      if(adminConfig.email!==''){
-        const mailOptions = {
-          from: 'parkingsystem.iot@gmail.com', // sender address
-          to: adminConfig.email, // list of receivers
-          subject: '¡Atención!', // Subject line
-          html: '<h4>Se ha sobrepasado el límite de '+adminConfig.maxLimit+'% de ocupación.</h4><br>'+
-          '<h5>Fecha y hora: '+moment(Date.now()).format("DD-MM-YY HH:mm")+'</h5>'// plain text body
-        };
-        transporter.sendMail(mailOptions, function (err, info) {
-          if(err)
-            console.log(err)
-          else
-            console.log("Email enviado.");
-       });
-      }
+  // if needs to send email and web notifications
+
+  if (adminConfig.notify && percentage > adminConfig.maxLimit) {
+    io.sockets.emit("overLimit", adminConfig.maxLimit);
+    // Sends email if exists
+    if (adminConfig.email !== "") {
+      const mailOptions = {
+        from: "parkingsystem.iot@gmail.com", // sender address
+        to: adminConfig.email, // list of receivers
+        subject: "¡Atención!", // Subject line
+        html:
+          "<h4>Se ha sobrepasado el límite de " +
+          adminConfig.maxLimit +
+          "% de ocupación.</h4><br>" +
+          "<h5>Fecha y hora: " +
+          moment(Date.now()).format("DD-MM-YY HH:mm") +
+          "</h5>" // plain text body
+      };
+      transporter.sendMail(mailOptions, function(err, info) {
+        if (err) console.log(err);
+        else {
+         console.log("Correo enviado.");
+        }
+      });
+       // Save alert in db
+       let alert = new AlertModel({
+        dateTime: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+        occupation: percentage,
+        receiver: adminConfig.email
+      });
+      await alert.save().then(info=>{
+        console.log("Alerta guardada en bd.");
+      });
     }
+  }
 }

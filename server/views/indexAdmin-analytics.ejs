@@ -176,34 +176,24 @@
               <div class="col-md-8">
                 <div class="card ">
                   <div class="card-header ">
-                    <h4 class="card-title">Promedio de Tiempo de Ocupación</h4>
+                    <h4 class="card-title">Agrupación<nav></nav></h4>
                   </div>
                   <div class="card-body ">
                     <div class="form-inline">
                       <div class="col-md-4">
                         <a class="font-weight-bold" for="fechaDesdeKPI3"
-                          >Desde</a
+                          ># De clusters</a
                         >
                         <input
                           class="form-control"
-                          type="date"
+                          type="number"
+                          min="2"
+                          value="2"
                           name="fechaDesdeKPI3"
                           id="fechaDesdeKPI3"
                         />
                       </div>
-                      <div class="col-md-4">
-                        <a
-                          class="font-weight-bold text-left"
-                          for="fechaHastaKPI3"
-                          >Hasta</a
-                        >
-                        <input
-                          class="form-control"
-                          type="date"
-                          name="fechaHastaKPI3"
-                          id="fechaHastaKPI3"
-                        />
-                      </div>
+                      
                       <div class="col-md-4">
                         <label for="btnKPI3"><br /></label>
                         <button
@@ -218,7 +208,7 @@
                       </div>
                     </div>
                     <div></div>
-                    <canvas id="kpi3Chart"></canvas>
+                    <canvas id="charCluster"></canvas>
                   </div>
                   <div class="card-footer "></div>
                 </div>
@@ -227,42 +217,6 @@
             </div>
           </div>
         </div>
-        <footer class="footer">
-          <div class="container-fluid">
-            <nav>
-              <ul class="footer-menu">
-                <li>
-                  <a href="#">
-                    Home
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    Company
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    Portfolio
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    Blog
-                  </a>
-                </li>
-              </ul>
-              <p class="copyright text-center">
-                ©
-                <script>
-                  document.write(new Date().getFullYear());
-                </script>
-                <a href="http://www.creative-tim.com">Creative Tim</a>, made
-                with love for a better web
-              </p>
-            </nav>
-          </div>
-        </footer>
       </div>
     </div>
   </body>
@@ -289,6 +243,7 @@
   ></script>
   <!-- Light Bootstrap Dashboard DEMO methods, don't include it in your project! -->
   <script src="../assets/js/demo.js"></script>
+  <script src="/js/utils.js"></script>
   <script type="text/javascript">
   var ctx = document.getElementById("chartPrediction");
   var noDataMessage = document.getElementById("noDataMessage");
@@ -315,6 +270,7 @@
       fechaPrediccion.value = new Date().toISOString().substr(0, 10);
       fechaPrediccion.min = new Date().toISOString().substr(0, 10);
       getPrediction();
+      kmeans();
     });
     ///// Linear Regression ///
     let apiPrediction = new XMLHttpRequest();
@@ -411,6 +367,71 @@
         true
       );
       apiPrediction.send();
+    }
+
+    ///// K-Means ///
+    function kmeans(){
+      var color = Chart.helpers.color;
+		var scatterChartData = {
+			datasets: [{
+				label: 'Cluster 1',
+				borderColor: window.chartColors.red,
+				backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
+				data: [{
+					x: 3,
+					y: 4,
+				}, {
+					x: 4,
+					y: 7,
+				}, {
+					x: 2,
+					y: 6,
+				}, {
+					x: 5,
+					y: 3,
+				}, {
+					x: 1,
+					y: 7,
+				}, {
+					x: 4,
+					y: 10,
+				}, {
+					x: 6,
+					y: 8,
+				}, {
+					x: 3,
+					y: 11,
+				}]
+			}, {
+				label: 'Cluster 2',
+				borderColor: window.chartColors.blue,
+				backgroundColor: color(window.chartColors.blue).alpha(0.2).rgbString(),
+				data: [{
+					x: 12,
+					y: 10,
+				}, {
+					x: 8,
+					y: 11,
+				}, {
+					x: 9,
+					y: 13,
+				}, {
+					x: 10,
+					y: 12,
+				}]
+			}]
+    };
+    var ctx = document.getElementById('charCluster').getContext('2d');
+			window.myScatter = Chart.Scatter(ctx, {
+				data: scatterChartData,
+				options: {
+					title: {
+						display: false,
+						text: 'Chart.js Scatter Chart'
+					},
+				}
+				
+			});
     }
   </script>
 </html>
