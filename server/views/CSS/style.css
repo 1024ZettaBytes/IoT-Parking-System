@@ -3,7 +3,7 @@ body {
     padding: 0;
     font-family: Helvetica, Arial, sans-serif;
     color: #666;
-    background: gray;
+    background: rgb(168, 168, 168);
     font-size: 1em;
     line-height: 1.5em;
     padding-top: 80px;
@@ -115,18 +115,20 @@ nav ul li a:hover {
 
 #main-content {
     background: white;
-    width: 90%;
-    max-width: 800px;
+    width: 80%;
     margin: 20px auto;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 table.GeneratedTable {
-    width: 100%;
+    float: left;
+    width: 17.5%;
+    height: 400px;
     text-align: center;
     background-color: #95ff95;
     border-collapse: collapse;
-    border-width: 5px;
+    border-top: 5px;
+    border-right: 0px;
     border-color: #ffffff;
     border-style: solid;
     color: #000000;
@@ -137,10 +139,64 @@ table.GeneratedTable th {
     border-width: 5px;
     border-color: #ffffff;
     border-style: solid;
+    border-right-color: gray;
     padding: 6px;
 }
 
 table.GeneratedTable thead {
+    background-color: gray;
+}
+
+table.GeneratedTableLeft {
+    float: left;
+    width: 17.5%;
+    height: 400px;
+    text-align: center;
+    background-color: #95ff95;
+    border-collapse: collapse;
+    border-top: 5px;
+    border-right: 0px;
+    border-color: #ffffff;
+    border-style: solid;
+    color: #000000;
+}
+
+table.GeneratedTableLeft td,
+table.GeneratedTableLeft th {
+    border-width: 5px;
+    border-color: #ffffff;
+    border-style: solid;
+    border-left-color: gray;
+    padding: 6px;
+}
+
+table.GeneratedTableLeft thead {
+    background-color: gray;
+}
+
+table.Ground {
+    float: left;
+    width: 15%;
+    height: 400px;
+    text-align: center;
+    background-color: gray;
+    border-collapse: collapse;
+    border-top: 5px;
+    border-right: 0px;
+    border-color: gray;
+    border-style: solid;
+    color: gray;
+}
+
+table.Ground td,
+table.Ground th {
+    border-width: 5px;
+    border-color: gray;
+    border-style: solid;
+    padding: 6px;
+}
+
+table.Ground thead {
     background-color: gray;
 }
 
