@@ -5,18 +5,15 @@ const database = "parking";
 
 let SensorModel = require("./models/sensor");
 let Readingmodel = require("./models/readings");
+let UserModel = require('./models/user');
 class DatabaseManager {
-    constructor() {
-        this.connect();
-    }
+
 
     connect() {
-        mongoose.connect(`mongodb://${server}/${database}`, { useNewUrlParser: true }).then(() => {
-            console.log("[*] Connected to the DB.");
-        }).catch(err => {
-            console.log("[ERROR] DB connection failed.");
-        });
-
+        return mongoose.connect(`mongodb://${server}/${database}`, { useNewUrlParser: true });
+    }
+    getSensors(){
+        return SensorModel.find().exec();
     }
     saveSensor(sensorObj) {
 
@@ -29,10 +26,14 @@ class DatabaseManager {
                 console.error(err);
             });
     }
+    getSensorLastStatus(sensorId) {
+        return Readingmodel.findOne({ sensorId }, {}, { sort: { 'dateTime': -1 } }).exec();
+
+    }
     saveReading(readingObject) {
 
         var date = new Date();
-        readingObject.dateTime =date;
+        readingObject.dateTime = date;
         let reading = new Readingmodel(readingObject);
         reading.save()
             .then(() => {
@@ -41,6 +42,13 @@ class DatabaseManager {
             .catch(err => {
                 console.error(err);
             });
+    }
+   async getAdminOptions(){
+
+      let configs = await UserModel.findOne({admin:true});
+      console.log(configs);
+      return "YA";
+       
     }
 }
 module.exports = new DatabaseManager();

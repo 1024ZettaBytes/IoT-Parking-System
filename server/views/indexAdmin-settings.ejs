@@ -1,0 +1,274 @@
+<!-- 
+=========================================================
+ Light Bootstrap Dashboard - v2.0.1
+=========================================================
+
+ Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard
+ Copyright 2019 Creative Tim (https://www.creative-tim.com)
+ Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard/blob/master/LICENSE)
+
+ Coded by Creative Tim
+
+=========================================================
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.  -->
+
+<!DOCTYPE html>
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="../assets/img/apple-icon.png"
+    />
+    <link rel="icon" type="image/png" href="../assets/img/favicon.ico" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>
+      Administrador | Analíticos
+    </title>
+    <meta
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no"
+      name="viewport"
+    />
+    <!--     Fonts and icons     -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"
+    />
+    <!-- CSS Files -->
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="../assets/css/light-bootstrap-dashboard.css?v=2.0.0 "
+      rel="stylesheet"
+    />
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link href="../assets/css/demo.css" rel="stylesheet" />
+    <script src="/js/socket.io.js"></script>
+    <script src="/js/scriptAdmin.js"></script>
+    <script src="/chartmin/Chart.min.js"></script>
+    <style>
+      canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="sidebar" data-image="../assets/img/sidebar-5.jpg">
+        <!--
+           Tip 1: You can change the color of the sidebar using: data-color="purple | blue | green | orange | red"
+   
+           Tip 2: you can also add an image using data-image tag
+       -->
+        <div class="sidebar-wrapper">
+          <div class="logo">
+            <a href="../" class="simple-text">
+              Monitoreo de Estacionamiento
+            </a>
+          </div>
+          <ul class="nav">
+            <li>
+              <a class="nav-link" href="../admin">
+                <i class="nc-icon nc-chart-pie-35"></i>
+                <p>Dashboard</p>
+              </a>
+            </li>
+            <li>
+              <a class="nav-link" href="../admin/analytics">
+                <i class="nc-icon nc-chart-bar-32"></i>
+                <p>Analíticos</p>
+              </a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link">
+                <i class="nc-icon nc-settings-gear-64"></i>
+                <p>Configuración</p>
+              </a>
+            </li>
+            <li class="nav-item active active-pro">
+              <a class="nav-link active" href="../">
+                <i class="nc-icon nc-button-power"></i>
+                <p>Cerrar</p>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="main-panel">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg " color-on-scroll="500">
+          <div class="container-fluid">
+            <a class="navbar-brand"> Configuración </a>
+            <button
+              href=""
+              class="navbar-toggler navbar-toggler-left"
+              type="button"
+              data-toggle="collapse"
+              aria-controls="navigation-index"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-bar burger-lines"></span>
+              <span class="navbar-toggler-bar burger-lines"></span>
+              <span class="navbar-toggler-bar burger-lines"></span>
+            </button>
+            <div
+              class="collapse navbar-collapse justify-content-end"
+              id="navigation"
+            ></div>
+          </div>
+        </nav>
+        <!-- End Navbar -->
+        <div class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-5 mx-auto text-center">
+                <div class="card text-left">
+                  <div class="card-header text-center">
+                    <h4 class="card-title">Alertas</h4>
+                  </div>
+                  <div class="card-body">
+                    <div class="form-group">
+                      <input
+                        type="checkbox"
+                        name="activeNotification"
+                        value="true"
+                        id="activeNotification"
+                        <%if(adminConfig.notify){%>
+                          checked<%}%>/> Recibir alertas (email y web)<br />
+                    </div>
+                    <div class="form-group text-left col-md-12">
+                      <label class="font-weight-bold" for="emailUsuario"
+                        >Correo</label
+                      >
+                      <input
+                        class="form-control"
+                        type="email"
+                        name=""
+                        value="<%=adminConfig.email%>"
+                        placeholder="usuario@mail.com"
+                        id="emailUsuario"
+                      />
+                    </div>
+                    <div class="form-group text-left col-md-12">
+                      <label class="font-weight-bold" for="maxLimit"
+                        >Ocupación Máxima (%)</label
+                      >
+                      <input
+                        id="maxLimit"
+                        type="number"
+                        title="Ocupación Máxima"
+                        class="form-control col-md-4"
+                        name="maxLimit"
+                        min="0"
+                        max="100"
+                        value="<%= adminConfig.maxLimit%>"
+                        placeholder="%"
+                        required
+                      />
+                    </div>
+                    <div class="form-group col-md-12">
+                      <button
+                        class="btn btn-primary btn-block"
+                        onclick="setAlert()"
+                      >
+                        Guardar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <!--   Core JS Files   -->
+  <script
+    src="../assets/js/core/jquery.3.2.1.min.js"
+    type="text/javascript"
+  ></script>
+  <script src="../assets/js/core/popper.min.js" type="text/javascript"></script>
+  <script
+    src="../assets/js/core/bootstrap.min.js"
+    type="text/javascript"
+  ></script>
+  <!--  Plugin for Switches, full documentation here: http://www.jque.re/plugins/version3/bootstrap.switch/ -->
+  <script src="../assets/js/plugins/bootstrap-switch.js"></script>
+  <!--  Chartist Plugin  -->
+  <script src="../assets/js/plugins/chartist.min.js"></script>
+  <!--  Notifications Plugin    -->
+  <script src="../assets/js/plugins/bootstrap-notify.js"></script>
+  <!-- Control Center for Light Bootstrap Dashboard: scripts for the example pages etc -->
+  <script
+    src="../assets/js/light-bootstrap-dashboard.js?v=2.0.0 "
+    type="text/javascript"
+  ></script>
+  <!-- Light Bootstrap Dashboard DEMO methods, don't include it in your project! -->
+  <script src="../assets/js/demo.js"></script>
+  <script type="text/javascript">
+    var socket = io.connect("http://" + "<%=ip%>" + ":8080", {
+      forceNew: true
+    });
+    socket.on("overLimit", data => {
+      console.log("Debo mostrar notificación");
+      demo.notify("Se ha sobrepasado el límite de "+data+"%.");
+      demo.showNotification();
+    });
+    $(document).ready(function() {});
+    ///// Linear Regression ///
+    let apiSetAlert = new XMLHttpRequest();
+    apiSetAlert.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        if ("ERROR_BD" !== this.responseText) {
+          if ("NOT_ENOUGH_DATA" !== this.responseText) {
+            alert("¡Datos actualizados!");
+          } else {
+            ctx.hidden = true;
+            noDataMessage.hidden = false;
+          }
+        } else {
+          // Abrir modal informando de error en la bd
+          document.getElementById("exampleModalLabel").innerHTML = "ERROR!";
+          document.getElementById("mensaje").innerHTML =
+            "Ocurrió un error al acceder a la base de datos. Intente nuevamente.";
+          $("#myModal").modal("show");
+        }
+      }
+    };
+    function updatePrediction(data) {}
+    function setAlert() {
+      apiSetAlert.open("POST", "../api/admin/setAlert", true);
+      apiSetAlert.setRequestHeader("Content-type", "application/json");
+      apiSetAlert.setRequestHeader(
+        "X-Parse-Application-Id",
+        "VnxVYV8ndyp6hE7FlPxBdXdhxTCmxX1111111"
+      );
+      apiSetAlert.setRequestHeader(
+        "X-Parse-REST-API-Key",
+        "6QzJ0FRSPIhXbEziFFPs7JvH1l11111111"
+      );
+      
+      var notify = document.getElementById("activeNotification").checked;
+      var correo = document.getElementById("emailUsuario").value;
+      var maxLimit = document.getElementById("maxLimit").value;
+      var parametros = {
+        notify: notify,
+        email: correo,
+        maxLimit: maxLimit
+      };
+      console.log(JSON.stringify(parametros));
+      apiSetAlert.send(JSON.stringify(parametros));
+    }
+  </script>
+</html>
