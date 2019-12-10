@@ -267,8 +267,8 @@
       // Javascript method's body can be found in assets/js/demos.js
       // Set dates and get data for first time
       let fechaPrediccion = document.getElementById("fechaPrediccion");
-      fechaPrediccion.value = new Date().toISOString().substr(0, 10);
-      fechaPrediccion.min = new Date().toISOString().substr(0, 10);
+      fechaPrediccion.value = "<%= moment().format("YYYY-MM-DD")%>";
+      fechaPrediccion.min = "<%= moment().format("YYYY-MM-DD")%>";
       getPrediction();
       kmeans();
     });

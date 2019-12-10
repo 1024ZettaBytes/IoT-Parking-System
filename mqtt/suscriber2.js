@@ -5,7 +5,7 @@ client.on('connect', function () {
     console.log("[*] Subscriber connected.");
 })
 client.on('message', function (topic, message) {
-console.log(message.toString());
-    //const reading = JSON.parse(message.toString());
+    const reading = JSON.parse(message.toString());
+    console.log(reading);
 // JSON object sent to quality
 })

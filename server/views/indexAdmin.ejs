@@ -329,13 +329,13 @@
       // Javascript method's body can be found in assets/js/demos.js
       // Set dates and get data for first time
       let fechaKPI2 = document.getElementById("fechaKPI2");
-      fechaKPI2.value = new Date().toISOString().substr(0, 10);
-      fechaKPI2.max = new Date().toISOString().substr(0, 10);
+      fechaKPI2.value = "<%= moment().format("YYYY-MM-DD")%>";
+      fechaKPI2.max = "<%= moment().format("YYYY-MM-DD")%>";
       let fechaDesdeKPI3 = document.getElementById("fechaDesdeKPI3");
       fechaDesdeKPI3.value = "2019-01-01";
-      fechaDesdeKPI3.max = new Date().toISOString().substr(0, 10);
+      fechaDesdeKPI3.max = "<%= moment().format("YYYY-MM-DD")%>";
       let fechaHastaKPI3 = document.getElementById("fechaHastaKPI3");
-      fechaHastaKPI3.value = new Date().toISOString().substr(0, 10);
+      fechaHastaKPI3.value = "<%= moment().format("YYYY-MM-DD")%>";
       fechaHastaKPI3.min = "2019-01-01";
       getPercentageByDate();
       getMeansByPeriod();

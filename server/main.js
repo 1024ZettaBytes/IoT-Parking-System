@@ -16,6 +16,7 @@ let transporter = nodemailer.createTransport({
   }
 });
 
+app.locals.moment= moment; 
 let SensorModel = require("../db/models/sensor");
 let Readingmodel = require("../db/models/readings");
 let UserModel = require("../db/models/user");
@@ -44,7 +45,6 @@ app.get("/", function(req, res) {
 });
 app.get("/admin", async (req, res) => {
   let alerts = await AlertModel.find();
-  console.log(alerts);
   res.render("indexAdmin", { ip: ip.address(), alerts: alerts });
 });
 app.get("/admin/analytics", (req, res) => {
@@ -126,7 +126,7 @@ app.get("/api/analytics/prediction/:dateToPredict", async (req, res) => {
   let rd = await Readingmodel.findOne();
   // Find the first coincidence of the recived day of week
   let firstDate = moment(rd.dateTime).startOf("day");
-  let firstDay = firstDate.day(); // 5
+  let firstDay = firstDate.day();
   dayOfWeek = dayOfWeek == 0 ? 7 : dayOfWeek;
   firstDay = firstDay == 0 ? 7 : firstDay;
   if (dayOfWeek >= firstDay)
@@ -134,7 +134,7 @@ app.get("/api/analytics/prediction/:dateToPredict", async (req, res) => {
   else firstDate = firstDate.add(7 - firstDay + dayOfWeek, "d");
   const currentDate = moment(Date.now()).startOf("day");
   // Start iterating for searching all the "day of week" before current date
-  while (firstDate.isBefore(currentDate)) {
+  while (firstDate.isSameOrBefore(currentDate)) {
     // Save date into array for analization and go to the next week
     dates.push(firstDate.clone());
     firstDate = firstDate.add(7, "d");
@@ -258,10 +258,6 @@ exports.sendNotification = jsonStatus => {
 };
 async function shouldSentEmail(percentage) {
   let adminConfig = await UserModel.findOne({ admin: true });
-  console.log("Voy a comprobar");
-  console.log("Porcentaje: " + percentage);
-  console.log("Notificar: " + adminConfig.notify);
-  console.log("MAX: " + adminConfig.maxLimit);
 
   // if needs to send email and web notifications
 
