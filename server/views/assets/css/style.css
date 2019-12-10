@@ -1,123 +1,125 @@
+/*
+ * Globals
+ */
+
+
+/* Links */
+
+a,
+a:focus,
+a:hover {
+    color: #fff;
+}
+
+
+/* Custom default button */
+
+.btn-secondary,
+.btn-secondary:hover,
+.btn-secondary:focus {
+    color: #333;
+    text-shadow: none;
+    /* Prevent inheritance from `body` */
+    background-color: #fff;
+    border: .05rem solid #fff;
+}
+
+
+/*
+ * Base structure
+ */
+
+html,
 body {
-    margin: 0;
-    padding: 0;
-    font-family: Helvetica, Arial, sans-serif;
-    color: #666;
-    background: rgb(168, 168, 168);
-    font-size: 1em;
-    line-height: 1.5em;
-    padding-top: 80px;
+    height: 100%;
+    background-color: #333;
 }
 
-h1 {
-    font-size: 2.3em;
-    line-height: 1.3em;
-    margin: 15px 0;
-    text-align: center;
-    font-weight: 300;
+body {
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex-pack: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    color: #fff;
+    text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+    box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
 }
 
-p {
-    margin: 0 0 1.5em 0;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-
-/************ 
-//-------------------------------
-// CABECERA
-//-------------------------------
-************/
-
-#main-header {
-    background: #333;
-    color: white;
-    height: 80px;
-    width: 100%;
-    left: 0;
-    top: 0;
-    position: fixed;
-}
-
-#main-header a {
-    color: white;
+.cover-container {
+    max-width: 42em;
 }
 
 
 /*
- * Logo
+ * Header
  */
 
-#logo-header {
-    float: left;
-    padding: 15px 0 0 20px;
-    text-decoration: none;
+.masthead {
+    margin-bottom: 2rem;
 }
 
-#logo-header:hover {
-    color: #0b76a6;
+.masthead-brand {
+    margin-bottom: 0;
 }
 
-#logo-header .site-name {
-    display: block;
+.nav-masthead .nav-link {
+    padding: .25rem 0;
     font-weight: 700;
-    font-size: 1.2em;
+    color: rgba(255, 255, 255, .5);
+    background-color: transparent;
+    border-bottom: .25rem solid transparent;
 }
 
-#logo-header .site-desc {
-    display: block;
-    font-weight: 300;
-    font-size: 0.8em;
-    color: #999;
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+    border-bottom-color: rgba(255, 255, 255, .25);
+}
+
+.nav-masthead .nav-link+.nav-link {
+    margin-left: 1rem;
+}
+
+.nav-masthead .active {
+    color: #fff;
+    border-bottom-color: #fff;
+}
+
+@media (min-width: 48em) {
+    .masthead-brand {
+        float: left;
+    }
+    .nav-masthead {
+        float: right;
+    }
 }
 
 
 /*
- * Navegación
+ * Cover
  */
 
-nav {
-    float: right;
+.cover {
+    padding: 0 1.8rem;
 }
 
-nav ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    padding-right: 20px;
-}
-
-nav ul li {
-    display: inline-block;
-    line-height: 80px;
-}
-
-nav ul li a {
-    display: block;
-    padding: 0 10px;
-    text-decoration: none;
-}
-
-nav ul li a:hover {
-    background: #0b76a6;
+.cover .btn-lg {
+    padding: .75rem 1.25rem;
+    font-weight: 700;
 }
 
 
-/************ 
-//------------------------------
-// CONTENIDO
-//------------------------------
-************/
+/*
+ * Footer
+ */
 
-#main-content {
-    background: white;
-    width: 80%;
-    margin: 20px auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.mastfoot {
+    color: rgba(255, 255, 255, .5);
+}
+
+table {
+    box-shadow: 8px 10px 10px #000000;
 }
 
 table.GeneratedTable {
@@ -129,7 +131,7 @@ table.GeneratedTable {
     border-collapse: collapse;
     border-top: 5px;
     border-right: 0px;
-    border-color: #ffffff;
+    border-color: yellow;
     border-style: solid;
     color: #000000;
 }
@@ -137,14 +139,14 @@ table.GeneratedTable {
 table.GeneratedTable td,
 table.GeneratedTable th {
     border-width: 5px;
-    border-color: #ffffff;
+    border-color: yellow;
     border-style: solid;
-    border-right-color: gray;
+    border-right-color: rgb(82, 82, 82);
     padding: 6px;
 }
 
 table.GeneratedTable thead {
-    background-color: gray;
+    background-color: rgb(82, 82, 82);
 }
 
 table.GeneratedTableLeft {
@@ -156,7 +158,7 @@ table.GeneratedTableLeft {
     border-collapse: collapse;
     border-top: 5px;
     border-right: 0px;
-    border-color: #ffffff;
+    border-color: yellow;
     border-style: solid;
     color: #000000;
 }
@@ -164,61 +166,38 @@ table.GeneratedTableLeft {
 table.GeneratedTableLeft td,
 table.GeneratedTableLeft th {
     border-width: 5px;
-    border-color: #ffffff;
+    border-color: yellow;
     border-style: solid;
-    border-left-color: gray;
+    border-left-color: rgb(82, 82, 82);
     padding: 6px;
 }
 
 table.GeneratedTableLeft thead {
-    background-color: gray;
+    background-color: rgb(82, 82, 82);
 }
 
 table.Ground {
     float: left;
-    width: 15%;
+    width: 5%;
     height: 400px;
     text-align: center;
-    background-color: gray;
+    background-color: rgb(82, 82, 82);
     border-collapse: collapse;
     border-top: 5px;
     border-right: 0px;
-    border-color: gray;
+    border-color: rgb(82, 82, 82);
     border-style: solid;
-    color: gray;
+    color: rgb(82, 82, 82);
 }
 
 table.Ground td,
 table.Ground th {
     border-width: 5px;
-    border-color: gray;
+    border-color: rgb(82, 82, 82);
     border-style: solid;
     padding: 6px;
 }
 
 table.Ground thead {
-    background-color: gray;
-}
-
-
-/************
-//-----------------------------
-// PIE PÁGINA
-//-----------------------------
-************/
-
-#main-footer {
-    background: #333;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    margin-top: 40px;
-}
-
-#main-footer p {
-    margin: 0;
-}
-
-#main-footer a {
-    color: white;
+    background-color: rgb(82, 82, 82);
 }

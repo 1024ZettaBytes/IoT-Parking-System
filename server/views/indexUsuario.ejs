@@ -1,181 +1,208 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Estacionamiento</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Revisa los lugares disponibles">
+    <meta name="author" content="Eduardo Ramírez -- Ariel Aramburo">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>SmartParking</title>
+
     <script src="js/socket.io.js"></script>
     <script>
-    var socket = io.connect('http://'+'<%=ip%>'+':8080', { 'forceNew': true });
+        var socket = io.connect('http://' + '<%=ip%>' + ':8080', {
+            'forceNew': true
+        });
 
-    socket.on('messages', (data) => {
-      console.log(data);
-      data.forEach((item, index) => {
-        updatePlace(item);
-      });
-    });
-    socket.on('message', (data) => {
-      console.log(data);
-      updatePlace(data);
-    });
-    function updatePlace(jsonObject) {
-      var color = "red";
-      var text = "OCUPADO";
-      if (!jsonObject.status) {
-        color = "green";
-        text = "LIBRE";
-      }
-      document.getElementById('Place' + jsonObject.sensorId).innerHTML = text;
-      document.getElementById('Place' + jsonObject.sensorId).style.color = color;
-    }
-  </script>
-    
+        socket.on('messages', (data) => {
+            console.log(data);
+            data.forEach((item, index) => {
+                updatePlace(item);
+            });
+        });
+        socket.on('message', (data) => {
+            console.log(data);
+            updatePlace(data);
+        });
 
-    <link rel="stylesheet" href="assets/css/style.css" />
+        function updatePlace(jsonObject) {
+            var color = "red";
+            var text = "OCUPADO";
+            if (!jsonObject.status) {
+                color = "green";
+                text = "LIBRE";
+            }
+            document.getElementById('Place' + jsonObject.sensorId).innerHTML = text;
+            document.getElementById('Place' + jsonObject.sensorId).style.backgroundColor = color;
+
+        }
+    </script>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/style.css" rel="stylesheet">
 </head>
 
-<body>
-    <header id="main-header">
-        <a id="logo-header" href="#">
-            <span class="site-name">SmartParking</span>
-            <span class="site-desc">Consulta de lugares libres</span>
-        </a>
-        <!-- / #logo-header -->
+<body class="text-center">
 
-        <nav>
-            <ul>
-                <li><a href="/admin">Administración</a></li>
-            </ul>
-        </nav>
-        <!-- / nav -->
-    </header>
-    <!-- / #main-header -->
-
-    <section id="main-content">
-        <article>
-            <div class="Content">
-                <table class="GeneratedTable">
-                    <tbody>
-                        <tr>
-                            <td id="Place1">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place2">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place3">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place4">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place5">Desconocido</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <table class="Ground">
-                    <tbody>
-                        <tr>
-                            <td>►</td>
-                        </tr>
-                        <tr>
-                            <td>◄</td>
-                        </tr>
-                        <tr>
-                            <td>►</td>
-                        </tr>
-                        <tr>
-                            <td>◄</td>
-                        </tr>
-                        <tr>
-                            <td>►</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <table class="GeneratedTableLeft">
-                    <tbody>
-                        <tr>
-                            <td id="Place6">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place7">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place8">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place9">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place10">Desconocido</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <table class="GeneratedTable">
-                    <tbody>
-                        <tr>
-                            <td id="Place11">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place12">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place13">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place14">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place15">Desconocido</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <table class="Ground">
-                    <tbody>
-                        <tr>
-                            <td>►</td>
-                        </tr>
-                        <tr>
-                            <td>◄</td>
-                        </tr>
-                        <tr>
-                            <td>►</td>
-                        </tr>
-                        <tr>
-                            <td>◄</td>
-                        </tr>
-                        <tr>
-                            <td>►</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <table class="GeneratedTableLeft">
-                    <tbody>
-                        <tr>
-                            <td id="Place16">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place17">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place18">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place19">Desconocido</td>
-                        </tr>
-                        <tr>
-                            <td id="Place20">Desconocido</td>
-                        </tr>
-                    </tbody>
-                </table>
+    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+        <header class="masthead mb-auto">
+            <div class="inner">
+                <h3 class="masthead-brand">SmartParking</h3>
+                <nav class="nav nav-masthead justify-content-center">
+                    <a class="nav-link active" href="indexUsuario.ejs">Home</a>
+                    <a class="nav-link" href="indexAdmin.ejs">Administración</a>
+                </nav>
             </div>
-        </article>
+        </header>
+        <main role="main" class="inner cover">
+            <h1 class="cover-heading">Lugares disponibles</h1>
+
+            <article>
+                <div class="Content">
+                    <table class="GeneratedTable">
+                        <tbody>
+                            <tr>
+                                <td id="Place1">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td id="Place2">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td id="Place3">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td id="Place4">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place5">Desconocido</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="Ground">
+                        <tbody>
+                            <tr>
+                                <td>►</td>
+                            </tr>
+                            <tr>
+                                <td>◄</td>
+                            </tr>
+                            <tr>
+                                <td>►</td>
+                            </tr>
+                            <tr>
+                                <td>◄</td>
+                            </tr>
+                            <tr>
+                                <td>►</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="GeneratedTableLeft">
+                        <tbody>
+                            <tr>
+                                <td bgcolor="gray" id="Place6">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place7">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place8">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place9">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place10">Desconocido</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="GeneratedTable">
+                        <tbody>
+                            <tr>
+                                <td bgcolor="gray" id="Place11">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place12">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place13">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place14">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place15">Desconocido</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="Ground">
+                        <tbody>
+                            <tr>
+                                <td>►</td>
+                            </tr>
+                            <tr>
+                                <td>◄</td>
+                            </tr>
+                            <tr>
+                                <td>►</td>
+                            </tr>
+                            <tr>
+                                <td>◄</td>
+                            </tr>
+                            <tr>
+                                <td>►</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="GeneratedTableLeft">
+                        <tbody>
+                            <tr>
+                                <td bgcolor="gray" id="Place16">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place17">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place18">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place19">Desconocido</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="gray" id="Place20">Desconocido</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </main>
+
+        <footer class="mastfoot mt-auto">
+            <div class="inner">
+                <p>Proyecto para Introducción a IOT</p>
+            </div>
+        </footer>
+    </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 
 </html>
-
