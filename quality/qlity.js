@@ -43,7 +43,7 @@ exports.checkQuality = (readigJSON) => {
                 console.log("No se guardó porque es igual al original");
         }
         else {
-            console.log("NO se hace nada pues fui interrumpido.")
+            console.log("No se hace nada pues fui interrumpido.")
         }
 
     }, 3000);

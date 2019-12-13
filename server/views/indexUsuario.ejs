@@ -28,20 +28,23 @@
         });
 
         function updatePlace(jsonObject) {
-            var color = "red";
+            var color = "#E53D3D";
             var text = "OCUPADO";
+            var textColor = "white";
             if (!jsonObject.status) {
-                color = "green";
+                color = "#95ff95";
                 text = "LIBRE";
+                textColor = "#4C4C4C";
             }
             document.getElementById('Place' + jsonObject.sensorId).innerHTML = text;
             document.getElementById('Place' + jsonObject.sensorId).style.backgroundColor = color;
+            document.getElementById('Place' + jsonObject.sensorId).style.color = textColor;
 
         }
     </script>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 
     <!-- Custom styles for this template -->
     <link href="assets/css/style.css" rel="stylesheet">
@@ -54,8 +57,8 @@
             <div class="inner">
                 <h3 class="masthead-brand">SmartParking</h3>
                 <nav class="nav nav-masthead justify-content-center">
-                    <a class="nav-link active" href="indexUsuario.ejs">Home</a>
-                    <a class="nav-link" href="indexAdmin.ejs">Administración</a>
+                    <a class="nav-link active" href="indexUsuario.ejs">Inicio</a>
+                    <a class="nav-link" href="/admin">Administración</a>
                 </nav>
             </div>
         </header>
